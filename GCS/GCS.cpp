@@ -15,3 +15,8 @@ void SendMessage(void* message, int messageSize)
 {
 
 }
+
+int main()			//needed for building project
+{
+	return 0;
+}

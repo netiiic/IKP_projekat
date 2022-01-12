@@ -8,7 +8,7 @@
 
 bool InitializeWindowsSockets();
 
-int  main(void) 
+int main(void) 
 {
     // Socket used for listening for new clients 
     SOCKET listenSocket = INVALID_SOCKET;
