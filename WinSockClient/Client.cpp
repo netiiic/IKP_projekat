@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
+#include "../GCS/GCS.cpp"
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT 27016
@@ -66,6 +67,7 @@ int __cdecl main(int argc, char **argv)
     printf("What would you like to send? ");
     //fgets(message, sizeof(message), stdin);
     //scanf("%ms", &message);
+    
     
 
     // Send an prepared message with null terminator included

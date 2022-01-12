@@ -1,3 +1,4 @@
+#include <functional>
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
@@ -21,7 +22,11 @@ struct Element
 
 static Element *HashMap[MAX_CLIENT];
 
-
-
+unsigned long GenerateHashFunction(unsigned char* str);
+void InitializeHashMap();
+bool AddValue(ClientData* client);
+ClientData* FindValue(unsigned int* group);
+bool DeleteValue(unsigned int* port);
+bool DeleteValueGroup(unsigned int* group);
 
 #endif

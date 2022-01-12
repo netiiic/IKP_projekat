@@ -29,5 +29,8 @@
     <ClCompile Include="GCS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="HashMap.cpp">
+      <Filter>HashMap</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
