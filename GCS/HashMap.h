@@ -8,7 +8,7 @@
 
 typedef struct ClientData
 {
-	unsigned int group[MAX_GROUP];
+	unsigned char group[MAX_GROUP];
 	unsigned int port;
 	unsigned char listen_address[MAX_ADDRESS];
 	unsigned int listen_port;
@@ -22,11 +22,11 @@ struct Element
 
 static Element *HashMap[MAX_CLIENT];
 
-unsigned long GenerateHashFunction(unsigned char* str);
-void InitializeHashMap();
-bool AddValue(ClientData* client);
+unsigned long GenerateHashValue(unsigned char* str);
+void HashMap_Initialize();
+bool HashMap_AddValue(ClientData* client);
 ClientData* FindValue(unsigned int* group);
 bool DeleteValue(unsigned int* port);
-bool DeleteValueGroup(unsigned int* group);
+bool DeleteValueGroup(unsigned char* group);
 
 #endif

@@ -1,6 +1,7 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "Functions.h"
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27016"

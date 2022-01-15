@@ -18,17 +18,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GCS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="HashMap.h">
       <Filter>HashMap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GCS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HashMap.cpp">
       <Filter>HashMap</Filter>
     </ClCompile>

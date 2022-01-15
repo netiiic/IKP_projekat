@@ -139,11 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="GCS.h" />
     <ClInclude Include="HashMap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GCS.cpp" />
     <ClCompile Include="HashMap.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

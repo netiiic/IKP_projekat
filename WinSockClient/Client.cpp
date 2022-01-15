@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
-#include "../GCS/GCS.cpp"
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT 27016
