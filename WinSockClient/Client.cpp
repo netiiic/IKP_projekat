@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <conio.h>
+#include "../GCS/HashMap.cpp"
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT 27016
@@ -16,6 +17,14 @@ bool InitializeWindowsSockets();
 
 int __cdecl main(int argc, char **argv) 
 {
+    typedef struct ToSendInfo
+    {
+        unsigned char group[MAX_GROUP];
+        unsigned int port;
+        unsigned char listen_address[MAX_ADDRESS];
+        unsigned int listen_port;
+    }ToSendInfo;
+
     // socket used to communicate with server
     SOCKET connectSocket = INVALID_SOCKET;
     // variable used to store function return value
@@ -36,6 +45,10 @@ int __cdecl main(int argc, char **argv)
 		// by InitializeWindowsSockets() function
 		return 1;
     }
+
+    //to get socket info
+    struct sockaddr_in socketAddress;
+    int socketAddress_len = sizeof(socketAddress);
 
     // create a socket
     connectSocket = socket(AF_INET,
@@ -62,16 +75,26 @@ int __cdecl main(int argc, char **argv)
         WSACleanup();
     }
     
-    char *message = "";
-    printf("What would you like to send? ");
+    char *message = "this is a test";
+    //printf("What would you like to send? ");
     //fgets(message, sizeof(message), stdin);
     //scanf("%ms", &message);
     
-    
+    ToSendInfo packet;
 
     // Send an prepared message with null terminator included
     //iResult = send( connectSocket, messageToSend, (int)strlen(messageToSend) + 1, 0 );
-    iResult = send(connectSocket, message, (int)strlen(message) + 1, 0);
+   // iResult = send(connectSocket, message, (int)strlen(message) + 1, 0);
+
+    printf("Hello, what group would you like to connect to? \n");
+    unsigned char* group[MAX_GROUP];
+    scanf_s("%s", group);
+    strcpy((char*)packet.group, (char*)group);
+    strcpy((char*)packet.listen_address, inet_ntoa(socketAddress.sin_addr));
+    packet.listen_port = (int)ntohs(socketAddress.sin_port);
+    packet.port = 2;
+
+    iResult = send(connectSocket, (char*)&packet, sizeof(packet), 0);
     if (iResult == SOCKET_ERROR)
     {
         printf("send failed with error: %d\n", WSAGetLastError());
@@ -81,7 +104,7 @@ int __cdecl main(int argc, char **argv)
     }
 
     
-    printf("Bytes Sent: %ld\n", iResult);
+    //printf("Bytes Sent: %ld\n", iResult);
     _getch();
     // cleanup
     closesocket(connectSocket);

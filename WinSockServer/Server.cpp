@@ -2,15 +2,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Functions.h"
+#include "../GCS/HashMap.cpp"
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27016"
-#define MAX_CLIENT 2
+//#define MAX_CLIENT 20
 
 bool InitializeWindowsSockets();
 
 int main(void) 
 {
+    typedef struct FromClient
+    {
+        unsigned char group[MAX_GROUP];
+        unsigned int port;
+        unsigned char listen_address[MAX_ADDRESS];
+        unsigned int listen_port;
+    }FromClient;
+
     // Socket used for listening for new clients 
     SOCKET listenSocket = INVALID_SOCKET;
     // Socket used for communication with client
@@ -108,7 +117,7 @@ int main(void)
     {
         FD_ZERO(&readfds);
 
-        if (trenutniBrojKonekcija < 2)
+        if (trenutniBrojKonekcija < MAX_CLIENT)
         {
             FD_SET(listenSocket, &readfds);
         }
@@ -130,7 +139,12 @@ int main(void)
             // rezultat je jednak broju soketa koji su zadovoljili uslov
             if (FD_ISSET(listenSocket, &readfds)) {
                 // izvrsenje operacije
-                acceptedSocket[trenutniBrojKonekcija] = accept(listenSocket, NULL, NULL);
+                sockaddr_in clientAddr;
+
+                int clientAddrSize = sizeof(struct sockaddr_in);
+                acceptedSocket[trenutniBrojKonekcija] = accept(listenSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
+
+                printf("\nNew client request accepted. Client address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
 
                 if (acceptedSocket[trenutniBrojKonekcija] == INVALID_SOCKET)
                 {
@@ -153,6 +167,34 @@ int main(void)
                     iResult = recv(acceptedSocket[i], recvbuf, DEFAULT_BUFLEN, 0);
                     if (iResult > 0)
                     {
+                        FromClient* fromClient = (FromClient*)recvbuf;
+
+                        ClientData* newClient = (ClientData*)malloc(sizeof(ClientData));
+
+                        sockaddr_in socketAddress;
+                        int socketAddress_len = sizeof(struct sockaddr_in);
+
+                        // Ask getsockname to fill in this socket's local adress
+                        if (getpeername(acceptedSocket[i], (sockaddr*)&socketAddress, &socketAddress_len) == -1)
+                        {
+                            printf("getsockname() failed.\n"); return -1;
+                        }
+
+                        char clientAddress[MAX_ADDRESS];
+                        inet_ntop(AF_INET, &socketAddress.sin_addr, clientAddress, INET_ADDRSTRLEN);
+
+                        strcpy((char*)newClient->group, (char*)fromClient->group);
+                        //strcpy((char*)newClient->address, (char*)clientAddress);
+                        strcpy((char*)newClient->listen_address, (char*)fromClient->listen_address);
+                        newClient->port = (int)ntohs(socketAddress.sin_port);
+                        newClient->listen_port = fromClient->listen_port;
+
+
+                        printf("Client Name: %s\n\n", newClient->group);
+
+                        HashMap_AddValue(newClient);
+                        HashMap_Show();
+
                         printf("Message received from client: %s.\n", recvbuf);
                     }
                     else if (iResult == 0)

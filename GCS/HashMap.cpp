@@ -49,7 +49,7 @@ bool HashMap_AddValue(ClientData* client)
 	return false;
 }
 
-/*void HashMap_Show()
+void HashMap_Show()
 {
 	printf("\n---- START ----\n");
 	for (int i = 0; i < MAX_CLIENT; i++)
@@ -65,4 +65,4 @@ bool HashMap_AddValue(ClientData* client)
 		printf(" NULL\n");
 	}
 	printf("---- END ----\n");
-}*/
+}
