@@ -1,4 +1,4 @@
-#include <functional>
+#pragma once
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
@@ -16,11 +16,11 @@ typedef struct ClientData
 
 struct Element
 {
-	ClientData *client;
-	struct Element *nextElement;
+	ClientData* client;
+	struct Element* nextElement;
 };
 
-static Element *HashMap[MAX_CLIENT];
+static Element* HashMap[MAX_CLIENT];
 
 unsigned long GenerateHashValue(unsigned char* str);
 void HashMap_Initialize();
@@ -30,3 +30,4 @@ bool DeleteValue(unsigned int* port);
 bool DeleteValueGroup(unsigned char* group);
 
 #endif
+#pragma once

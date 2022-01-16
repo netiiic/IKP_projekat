@@ -1,4 +1,8 @@
+#include "pch.h"
 #include "HashMap.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 unsigned long GenerateHashValue(unsigned char* str)
 {
@@ -54,7 +58,7 @@ bool HashMap_AddValue(ClientData* client)
 		printf("[%d] --->", i);
 		while (tempElement)
 		{
-			printf(" %s, %d, %s, %d |", tempElement->client->group, tempElement->client->port, 
+			printf(" %s, %d, %s, %d |", tempElement->client->group, tempElement->client->port,
 				tempElement->client->listen_address, tempElement->client->listen_port);
 			tempElement = tempElement->nextElement;
 		}
