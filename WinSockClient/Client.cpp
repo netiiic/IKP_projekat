@@ -15,6 +15,21 @@
 // Returns true if succeeded, false otherwise.
 bool InitializeWindowsSockets();
 
+char* read_message()
+{
+    int c;
+    char* input = (char*)malloc(1);
+    size_t length = 0;
+
+    while ((c = getchar()) != '\n' && c != EOF)
+    {
+        char* t = (char*)realloc(input, length + 1);
+        input = t;
+        input[length++] = c;
+    }
+    return input;
+}
+
 int __cdecl main(int argc, char **argv) 
 {
     typedef struct ToSendInfo
@@ -28,7 +43,7 @@ int __cdecl main(int argc, char **argv)
     typedef struct Poruka
     {
         unsigned int listen_port;
-        unsigned char* poruka;
+        char poruka[];
     }Poruka;
 
     // socket used to communicate with server
@@ -126,7 +141,7 @@ int __cdecl main(int argc, char **argv)
         //char* poruka = (char*)recvbuf;
         printf("%s", recvbuf);
         
-        char yn[3];
+        char yn[4];
         scanf("%s", yn);
         //printf("%s", yn);
         char* yes = "yes";
@@ -134,13 +149,20 @@ int __cdecl main(int argc, char **argv)
 
         if (strcmp(yn, yes) == 0)
         {
-            Poruka toSend;
-            char* message = (char*)malloc(100);
-            fgets(message, 100, stdin);
-            strcpy((char*)toSend.poruka, (char*)message);
-            toSend.listen_port = (int)ntohs(socketAddress.sin_port);
+            printf("What would you like to send?");
+            Poruka *toSend = (Poruka*)malloc(sizeof(Poruka));
+            char* message = (char*)malloc(100*sizeof(char));
+            scanf("%s", message);
+            int len = strlen(message);
+
+            
+            strncpy(toSend->poruka, message, len);
+            
+            
+
+            toSend->listen_port = (int)ntohs(socketAddress.sin_port);
             iResult = send(connectSocket, (char*)&toSend, sizeof(toSend), 0);
-            printf("yes");
+            //printf("yes");
         }
         else if (strcmp(yn, no) == 0)
         {
