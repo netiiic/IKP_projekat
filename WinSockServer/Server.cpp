@@ -10,7 +10,7 @@
 
 bool InitializeWindowsSockets();
 
-int main(void) 
+int main(void)
 {
     typedef struct FromClient
     {
@@ -35,16 +35,16 @@ int main(void)
     int iResult;
     // Buffer used for storing incoming data
     char recvbuf[DEFAULT_BUFLEN];
-    
-    if(InitializeWindowsSockets() == false)
+
+    if (InitializeWindowsSockets() == false)
     {
-		// we won't log anything since it will be logged
-		// by InitializeWindowsSockets() function
-		return 1;
+        // we won't log anything since it will be logged
+        // by InitializeWindowsSockets() function
+        return 1;
     }
-    
+
     // Prepare address information structures
-    addrinfo *resultingAddress = NULL;
+    addrinfo* resultingAddress = NULL;
     addrinfo hints;
 
     memset(&hints, 0, sizeof(hints));
@@ -55,7 +55,7 @@ int main(void)
 
     // Resolve the server address and port
     iResult = getaddrinfo(NULL, DEFAULT_PORT, &hints, &resultingAddress);
-    if ( iResult != 0 )
+    if (iResult != 0)
     {
         printf("getaddrinfo failed with error: %d\n", iResult);
         WSACleanup();
@@ -64,8 +64,8 @@ int main(void)
 
     // Create a SOCKET for connecting to server
     listenSocket = socket(AF_INET,      // IPv4 address famly
-                          SOCK_STREAM,  // stream socket
-                          IPPROTO_TCP); // TCP
+        SOCK_STREAM,  // stream socket
+        IPPROTO_TCP); // TCP
 
     if (listenSocket == INVALID_SOCKET)
     {
@@ -77,7 +77,7 @@ int main(void)
 
     // Setup the TCP listening socket - bind port number and local address 
     // to socket
-    iResult = bind( listenSocket, resultingAddress->ai_addr, (int)resultingAddress->ai_addrlen);
+    iResult = bind(listenSocket, resultingAddress->ai_addr, (int)resultingAddress->ai_addrlen);
     if (iResult == SOCKET_ERROR)
     {
         printf("bind failed with error: %d\n", WSAGetLastError());
@@ -103,10 +103,10 @@ int main(void)
     unsigned long mode = 1;
     iResult = ioctlsocket(listenSocket, FIONBIO, &mode);
 
-	printf("Server initialized, waiting for clients.\n");
+    printf("Server initialized, waiting for clients.\n");
 
     fd_set readfds;
-    
+
 
     // maksimalni period cekanja select funkcije
     timeval timeVal;
@@ -184,84 +184,137 @@ int main(void)
                         inet_ntop(AF_INET, &socketAddress.sin_addr, clientAddress, INET_ADDRSTRLEN);
 
                         strcpy((char*)newClient->group, (char*)fromClient->group);
-                        //strcpy((char*)newClient->address, (char*)clientAddress);
                         strcpy((char*)newClient->listen_address, (char*)fromClient->listen_address);
                         newClient->port = (int)ntohs(socketAddress.sin_port);
                         newClient->listen_port = fromClient->listen_port;
 
-
-                        printf("Client Name: %s\n\n", newClient->group);
-
                         HashMap_AddValue(newClient);
                         HashMap_Show();
 
-                        printf("Message received from client: %s.\n", recvbuf);
+                        //printf("Message received from client: %s.\n", recvbuf);
+
+                        char* poruka = "Successfully connected! Would you like to send a message?(yes/no)\n";
+                        iResult = send(acceptedSocket[i], poruka, (int)strlen(poruka) + 1, 0);
+                        if (iResult == SOCKET_ERROR)
+                        {
+                            printf("send failed with error: %d\n", WSAGetLastError());
+                            closesocket(acceptedSocket[i]);
+                            for (int j = i; j < trenutniBrojKonekcija - 1; j++)
+                            {
+                                acceptedSocket[j] = acceptedSocket[j + 1];
+                            }
+                            acceptedSocket[trenutniBrojKonekcija - 1] = INVALID_SOCKET;
+                            trenutniBrojKonekcija--;
+                            i--;
+
+
+                        }
                     }
                     else if (iResult == 0)
                     {
+                        FromClient* fromClient = (FromClient*)recvbuf;
+                        HashMap_DeleteValue(fromClient->group, fromClient->listen_port);
                         // connection was closed gracefully
                         printf("Connection with client closed.\n");
+                        HashMap_Show();
                         closesocket(acceptedSocket[i]);
                     }
                     else
                     {
-                        // there was an error during recv
-                        printf("recv failed with error: %d\n", WSAGetLastError());
-                        closesocket(acceptedSocket[i]);
+                        if (WSAGetLastError() == WSAEWOULDBLOCK) {
+
+                            continue;
+                        }
+                        else
+                        {
+                            for (int j = 0; j < MAX_GROUP; j++)
+                            {
+                                struct Element* tempClientElement = HashMap[j];
+                                while (tempClientElement)
+                                {
+                                    sockaddr_in socketAddress;
+                                    int socketAddress_len = sizeof(struct sockaddr_in);
+                                    if (getpeername(acceptedSocket[i], (sockaddr*)&socketAddress, &socketAddress_len) == -1)
+                                    {
+                                        break;
+                                    }
+                                    char tempClientAddress[30];
+                                    inet_ntop(AF_INET, &socketAddress.sin_addr, tempClientAddress, INET_ADDRSTRLEN);
+
+                                    if ((strcmp(tempClientAddress, (const char*)tempClientElement->client->listen_address) == 0) && ((unsigned int)ntohs(socketAddress.sin_port) == tempClientElement->client->port))
+                                    {
+                                        HashMap_DeleteValue(tempClientElement->client->group, tempClientElement->client->listen_port);
+                                        HashMap_DeleteGroup(tempClientElement->client->group);
+                                        //RemoveValueFromHashMap(tempClientElement->clientData->name);
+                                        //printf("Klijent %s se diskonektovao\n", tempClientElement->clientData->name);
+                                        HashMap_Show();
+                                        break;
+                                    }
+                                    tempClientElement = tempClientElement->nextElement;
+                                }
+                            }
+                            // there was an error during recv
+                            printf("recv failed with error: %d\n", WSAGetLastError());
+                            //HashMap_Show();
+                            closesocket(acceptedSocket[i]);
+                        }
+
+                        
                     }
                 }
             }
         }
     }
 
-    /*do
-    {
-        // Wait for clients and accept client connections.
-        // Returning value is acceptedSocket used for further
-        // Client<->Server communication. This version of
-        // server will handle only one client.
-        acceptedSocket = accept(listenSocket, NULL, NULL);
-
-        if (acceptedSocket == INVALID_SOCKET)
+        /*do
         {
-            printf("accept failed with error: %d\n", WSAGetLastError());
-            closesocket(listenSocket);
-            WSACleanup();
-            return 1;
-        }
+            // Wait for clients and accept client connections.
+            // Returning value is acceptedSocket used for further
+            // Client<->Server communication. This version of
+            // server will handle only one client.
+            acceptedSocket = accept(listenSocket, NULL, NULL);
 
-        do
+            if (acceptedSocket == INVALID_SOCKET)
+            {
+                printf("accept failed with error: %d\n", WSAGetLastError());
+                closesocket(listenSocket);
+                WSACleanup();
+                return 1;
+            }
+
+            do
+            {
+
+            } while (iResult > 0);
+
+            // here is where server shutdown loguc could be placed
+
+        } while (1);*/
+
+
+        for (int i = 0; i < trenutniBrojKonekcija; i++)
         {
-           
-        } while (iResult > 0);
-
-        // here is where server shutdown loguc could be placed
-
-    } while (1);*/
-
-
-    for (int i = 0; i < trenutniBrojKonekcija; i++)
-    {
-        // shutdown the connection since we're done
-        iResult = shutdown(acceptedSocket[i], SD_SEND);
-        if (iResult == SOCKET_ERROR)
-        {
-            printf("shutdown failed with error: %d\n", WSAGetLastError());
+            // shutdown the connection since we're done
+            iResult = shutdown(acceptedSocket[i], SD_SEND);
+            if (iResult == SOCKET_ERROR)
+            {
+                printf("shutdown failed with error: %d\n", WSAGetLastError());
+                closesocket(acceptedSocket[i]);
+                WSACleanup();
+                return 1;
+            }
             closesocket(acceptedSocket[i]);
-            WSACleanup();
-            return 1;
         }
-        closesocket(acceptedSocket[i]);
+
+
+        // cleanup
+        closesocket(listenSocket);
+
+        WSACleanup();
+
+        return 0;
     }
-   
 
-    // cleanup
-    closesocket(listenSocket);
-    
-    WSACleanup();
-
-    return 0;
-}
 
 bool InitializeWindowsSockets()
 {

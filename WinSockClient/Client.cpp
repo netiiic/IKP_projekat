@@ -25,6 +25,12 @@ int __cdecl main(int argc, char **argv)
         unsigned int listen_port;
     }ToSendInfo;
 
+    typedef struct Poruka
+    {
+        unsigned int listen_port;
+        unsigned char* poruka;
+    }Poruka;
+
     // socket used to communicate with server
     SOCKET connectSocket = INVALID_SOCKET;
     // variable used to store function return value
@@ -107,6 +113,58 @@ int __cdecl main(int argc, char **argv)
         closesocket(connectSocket);
         WSACleanup();
         return 1;
+    }
+
+    printf("%d\n\n", (int)ntohs(socketAddress.sin_port));
+
+    //primanje poruke
+    char recvbuf[DEFAULT_BUFLEN];
+    // Receive data until the client shuts down the connection
+    iResult = recv(connectSocket, recvbuf, DEFAULT_BUFLEN, 0);
+    if (iResult > 0)
+    {
+        //char* poruka = (char*)recvbuf;
+        printf("%s", recvbuf);
+        
+        char yn[3];
+        scanf("%s", yn);
+        //printf("%s", yn);
+        char* yes = "yes";
+        char* no = "no";
+
+        if (strcmp(yn, yes) == 0)
+        {
+            Poruka toSend;
+            char* message = (char*)malloc(100);
+            fgets(message, 100, stdin);
+            strcpy((char*)toSend.poruka, (char*)message);
+            toSend.listen_port = (int)ntohs(socketAddress.sin_port);
+            iResult = send(connectSocket, (char*)&toSend, sizeof(toSend), 0);
+            printf("yes");
+        }
+        else if (strcmp(yn, no) == 0)
+        {
+            printf("no");
+        }
+        else
+        {
+            printf("bullshit");
+        }
+
+    }
+    else if (iResult == 0)  //connection was closed gracefully
+    {
+        //printf("Connection with server closed.\n");
+        printf("Server vise nije dostupan!\n");        
+        return 0;
+
+    }
+    else  // there was an error during recv
+    {
+        //printf("recv failed with error: %d\n", WSAGetLastError());
+        printf("Server vise nije dostupan!\n");        
+        return 0;
+
     }
 
     
