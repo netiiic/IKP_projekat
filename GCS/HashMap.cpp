@@ -28,7 +28,7 @@ bool HashMap_AddValue(ClientData* client)
 	newElement->client = client;
 	newElement->nextElement = NULL;
 
-	unsigned int key = GenerateHashValue(client->group) % MAX_CLIENT;
+	unsigned int key = GenerateHashValue(client->group) % MAX_GROUP;
 
 	if (HashMap[key] == NULL)
 	{
@@ -49,6 +49,38 @@ bool HashMap_AddValue(ClientData* client)
 	return false;
 }
 
+bool HashMap_DeleteValue(unsigned char* group, unsigned int listen_port)
+{
+	unsigned int key = GenerateHashValue(group) % MAX_GROUP;
+	struct Element* tempElement = HashMap[key];
+	if (tempElement != NULL)
+	{
+		if (listen_port == tempElement->client->listen_port)
+		{
+			HashMap[key] = NULL;
+			return true;
+		}
+		else
+		{
+			while (tempElement->nextElement)
+			{
+				if (listen_port != tempElement->nextElement->client->listen_port)
+				{
+					HashMap[key]->nextElement = tempElement->nextElement->nextElement;
+					return true;
+				}
+				tempElement = tempElement->nextElement;
+			}
+		}
+	}
+	return false;
+}
+
+bool DeleteValueGroup(unsigned char* group)
+{
+	return false;
+}
+
 void HashMap_Show()
 {
 	printf("\n---- START ----\n");
@@ -66,3 +98,5 @@ void HashMap_Show()
 	}
 	printf("---- END ----\n");
 }
+
+
