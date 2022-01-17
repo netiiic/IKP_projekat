@@ -47,9 +47,7 @@ int __cdecl main(int argc, char **argv)
     }
 
     //to get socket info
-    struct sockaddr_in socketAddress;
-    int socketAddress_len = sizeof(socketAddress);
-
+    
     // create a socket
     connectSocket = socket(AF_INET,
                            SOCK_STREAM,
@@ -74,6 +72,14 @@ int __cdecl main(int argc, char **argv)
         closesocket(connectSocket);
         WSACleanup();
     }
+
+    struct sockaddr_in socketAddress;
+    int socketAddress_len = sizeof(socketAddress);
+
+    if (getsockname(connectSocket, (sockaddr*)&socketAddress, &socketAddress_len) == -1)
+    {
+        return -1;
+    }
     
     char *message = "this is a test";
     //printf("What would you like to send? ");
@@ -87,8 +93,8 @@ int __cdecl main(int argc, char **argv)
    // iResult = send(connectSocket, message, (int)strlen(message) + 1, 0);
 
     printf("Hello, what group would you like to connect to? \n");
-    unsigned char* group[MAX_GROUP];
-    scanf_s("%s", group);
+    unsigned char group[MAX_GROUP];
+    scanf("%s", &group);
     strcpy((char*)packet.group, (char*)group);
     strcpy((char*)packet.listen_address, inet_ntoa(socketAddress.sin_addr));
     packet.listen_port = (int)ntohs(socketAddress.sin_port);

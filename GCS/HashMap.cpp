@@ -28,7 +28,7 @@ bool HashMap_AddValue(ClientData* client)
 	newElement->client = client;
 	newElement->nextElement = NULL;
 
-	unsigned int key = GenerateHashValue(client->group); //% MAX_CLIENT;
+	unsigned int key = GenerateHashValue(client->group) % MAX_CLIENT;
 
 	if (HashMap[key] == NULL)
 	{
