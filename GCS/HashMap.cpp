@@ -78,6 +78,18 @@ bool HashMap_DeleteValue(unsigned char* group, unsigned int listen_port)
 
 bool DeleteValueGroup(unsigned char* group)
 {
+	unsigned int key = GenerateHashValue(group) % MAX_GROUP;
+	struct Element* tempElement = HashMap[key];
+
+	if (tempElement != NULL)
+	{
+		HashMap[key] = NULL;
+		printf("Group succesfully deleted.\n");
+		free(tempElement);
+		return true;
+	}	
+
+	printf("Group not found.\n");
 	return false;
 }
 
