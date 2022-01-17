@@ -154,11 +154,12 @@ int __cdecl main(int argc, char **argv)
             char* message = (char*)malloc(100*sizeof(char));
             scanf("%s", message);
             int len = strlen(message);
-
+            
             
             strncpy(toSend->poruka, message, len);
-            
-            
+            toSend->poruka[len] = '\0';
+            free(message);
+            printf("%s", toSend->poruka);
 
             toSend->listen_port = (int)ntohs(socketAddress.sin_port);
             iResult = send(connectSocket, (char*)&toSend, sizeof(toSend), 0);
