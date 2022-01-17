@@ -25,7 +25,7 @@ static Element* HashMap[MAX_CLIENT];
 unsigned long GenerateHashValue(unsigned char* str);
 void HashMap_Initialize();
 bool HashMap_AddValue(ClientData* client);
-bool HashMap_DeleteValue(unsigned int* port);
+bool HashMap_DeleteValue(unsigned char* group, unsigned int port);
 bool HashMap_DeleteGroup(unsigned char* group);
 
 #endif
