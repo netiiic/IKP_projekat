@@ -76,7 +76,7 @@ bool HashMap_DeleteValue(unsigned char* group, unsigned int listen_port)
 	return false;
 }
 
-bool DeleteValueGroup(unsigned char* group)
+bool HashMap_DeleteGroup(unsigned char* group)
 {
 	unsigned int key = GenerateHashValue(group) % MAX_GROUP;
 	struct Element* tempElement = HashMap[key];
