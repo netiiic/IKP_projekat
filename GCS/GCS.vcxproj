@@ -153,11 +153,13 @@
   <ItemGroup>
     <ClInclude Include="framework.h" />
     <ClInclude Include="HashMap.h" />
+    <ClInclude Include="HashMapPoruka.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GCS.cpp" />
     <ClCompile Include="HashMap.cpp" />
+    <ClCompile Include="HashMapPoruka.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

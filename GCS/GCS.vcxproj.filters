@@ -16,6 +16,9 @@
     <Filter Include="HashMap">
       <UniqueIdentifier>{826c533b-0053-4d55-bea2-874d761fed9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HashMapPoruka">
+      <UniqueIdentifier>{27a32bfd-8c1a-445b-86a0-a4c0b362cbb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -27,6 +30,9 @@
     <ClInclude Include="HashMap.h">
       <Filter>HashMap</Filter>
     </ClInclude>
+    <ClInclude Include="HashMapPoruka.h">
+      <Filter>HashMapPoruka</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GCS.cpp">
@@ -37,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="HashMap.cpp">
       <Filter>HashMap</Filter>
+    </ClCompile>
+    <ClCompile Include="HashMapPoruka.cpp">
+      <Filter>HashMapPoruka</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

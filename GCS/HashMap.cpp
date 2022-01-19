@@ -16,7 +16,7 @@ unsigned long GenerateHashValue(unsigned char* str)
 
 void HashMap_Initialize()
 {
-	for (int i = 0; i < MAX_CLIENT; i++)
+	for (int i = 0; i < MAX_GROUPS; i++)
 	{
 		HashMap[i] = NULL;
 	}
@@ -28,7 +28,7 @@ bool HashMap_AddValue(ClientData* client)
 	newElement->client = client;
 	newElement->nextElement = NULL;
 
-	unsigned int key = GenerateHashValue(client->group) % MAX_GROUP;
+	unsigned int key = GenerateHashValue(client->group) % MAX_GROUPS;
 
 	if (HashMap[key] == NULL)
 	{
@@ -51,34 +51,57 @@ bool HashMap_AddValue(ClientData* client)
 
 bool HashMap_DeleteValue(unsigned char* group, unsigned int listen_port)
 {
-	unsigned int key = GenerateHashValue(group) % MAX_GROUP;
-	struct Element* tempElement = HashMap[key];
+	unsigned int key = GenerateHashValue(group) % MAX_GROUPS;
+	struct Element* tempElement = HashMap[key], *prev = NULL;
 	if (tempElement != NULL)
 	{
 		if (listen_port == tempElement->client->listen_port)
 		{
-			HashMap[key] = NULL;
-			return true;
+			if (tempElement->nextElement)
+			{
+				HashMap[key]->client = tempElement->nextElement->client;
+				HashMap[key]->nextElement = tempElement->nextElement->nextElement;
+				return true;
+			}
+			else
+			{
+				HashMap[key] = NULL;
+				return true;
+			}
 		}
 		else
 		{
 			while (tempElement->nextElement)
 			{
-				if (listen_port != tempElement->nextElement->client->listen_port)
+				prev = tempElement;										//prethodni
+				tempElement = tempElement->nextElement;					//trenutni
+
+				if (tempElement->client->listen_port == listen_port)
 				{
-					HashMap[key]->nextElement = tempElement->nextElement->nextElement;
-					return true;
+					if (tempElement->nextElement)
+					{
+						prev->nextElement = tempElement->nextElement;
+						free(tempElement);
+						return true;
+					}
+					else
+					{						
+						prev->nextElement = NULL;
+						tempElement == NULL;
+						return true;
+					}
 				}
-				tempElement = tempElement->nextElement;
-			}
+			} 
 		}
 	}
+	else
+		printf("Group not found!\n");
 	return false;
 }
 
 bool HashMap_DeleteGroup(unsigned char* group)
 {
-	unsigned int key = GenerateHashValue(group) % MAX_GROUP;
+	unsigned int key = GenerateHashValue(group) % MAX_GROUPS;
 	struct Element* tempElement = HashMap[key];
 
 	if (tempElement != NULL)
@@ -96,7 +119,7 @@ bool HashMap_DeleteGroup(unsigned char* group)
 void HashMap_Show()
 {
 	printf("\n---- START ----\n");
-	for (int i = 0; i < MAX_CLIENT; i++)
+	for (int i = 0; i < MAX_GROUPS; i++)
 	{
 		struct Element* tempElement = HashMap[i];
 		printf("[%d] --->", i);

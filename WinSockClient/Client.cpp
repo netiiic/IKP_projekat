@@ -34,7 +34,7 @@ int __cdecl main(int argc, char **argv)
 {
     typedef struct ToSendInfo
     {
-        unsigned char group[MAX_GROUP];
+        unsigned char group[MAX_GROUP_LEN];
         unsigned int port;
         unsigned char listen_address[MAX_ADDRESS];
         unsigned int listen_port;
@@ -114,7 +114,7 @@ int __cdecl main(int argc, char **argv)
    // iResult = send(connectSocket, message, (int)strlen(message) + 1, 0);
 
     printf("Hello, what group would you like to connect to? \n");
-    unsigned char group[MAX_GROUP];
+    unsigned char group[MAX_GROUP_LEN];
     scanf("%s", &group);
     strcpy((char*)packet.group, (char*)group);
     strcpy((char*)packet.listen_address, inet_ntoa(socketAddress.sin_addr));

@@ -14,7 +14,7 @@ int main(void)
 {
     typedef struct FromClient
     {
-        unsigned char group[MAX_GROUP];
+        unsigned char group[MAX_GROUP_LEN];
         unsigned int port;
         unsigned char listen_address[MAX_ADDRESS];
         unsigned int listen_port;
@@ -23,11 +23,11 @@ int main(void)
     // Socket used for listening for new clients 
     SOCKET listenSocket = INVALID_SOCKET;
     // Socket used for communication with client
-    SOCKET acceptedSocket[MAX_CLIENT];
+    SOCKET acceptedSocket[MAX_GROUPS];
 
     int trenutniBrojKonekcija = 0;
 
-    for (int i = 0; i < MAX_CLIENT; i++)
+    for (int i = 0; i < MAX_GROUPS; i++)
     {
         acceptedSocket[i] = INVALID_SOCKET;
     }
@@ -117,7 +117,7 @@ int main(void)
     {
         FD_ZERO(&readfds);
 
-        if (trenutniBrojKonekcija < MAX_CLIENT)
+        if (trenutniBrojKonekcija < MAX_GROUPS)
         {
             FD_SET(listenSocket, &readfds);
         }
@@ -227,7 +227,7 @@ int main(void)
                         }
                         else
                         {
-                            for (int j = 0; j < MAX_GROUP; j++)
+                            for (int j = 0; j < MAX_GROUP_LEN; j++)
                             {
                                 struct Element* tempClientElement = HashMap[j];
                                 while (tempClientElement)
@@ -244,7 +244,7 @@ int main(void)
                                     if ((strcmp(tempClientAddress, (const char*)tempClientElement->client->listen_address) == 0) && ((unsigned int)ntohs(socketAddress.sin_port) == tempClientElement->client->port))
                                     {
                                         HashMap_DeleteValue(tempClientElement->client->group, tempClientElement->client->listen_port);
-                                        HashMap_DeleteGroup(tempClientElement->client->group);
+                                        //HashMap_DeleteGroup(tempClientElement->client->group);
                                         //RemoveValueFromHashMap(tempClientElement->clientData->name);
                                         //printf("Klijent %s se diskonektovao\n", tempClientElement->clientData->name);
                                         HashMap_Show();
