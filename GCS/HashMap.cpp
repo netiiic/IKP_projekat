@@ -125,8 +125,8 @@ void HashMap_Show()
 		printf("[%d] --->", i);
 		while (tempElement)
 		{
-			printf(" %s, %d, %s, %d |", tempElement->client->group, tempElement->client->port,
-				tempElement->client->listen_address, tempElement->client->listen_port);
+			printf(" %s, %d, %s, %d, SOCKET:%d |", tempElement->client->group, tempElement->client->port,
+				tempElement->client->listen_address, tempElement->client->listen_port, tempElement->client->socket);
 			tempElement = tempElement->nextElement;
 		}
 		printf(" NULL\n");

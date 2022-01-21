@@ -155,7 +155,7 @@ int main(void)
                 int clientAddrSize = sizeof(struct sockaddr_in);
                 acceptedSocket[trenutniBrojKonekcija] = accept(listenSocket, (struct sockaddr*)&clientAddr, &clientAddrSize);
 
-                printf("\nNew client request accepted. Client address: %s : %d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port));
+                printf("\nNew client request accepted. Client address: %s : %d, SOCKET:%d\n", inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), acceptedSocket[trenutniBrojKonekcija]);
 
                 if (acceptedSocket[trenutniBrojKonekcija] == INVALID_SOCKET)
                 {
@@ -201,6 +201,7 @@ int main(void)
                             strcpy((char*)newClient->listen_address, (char*)fromClient->listen_address);
                             newClient->port = (int)ntohs(socketAddress.sin_port);
                             newClient->listen_port = fromClient->listen_port;
+                            newClient->socket = acceptedSocket[i];
 
                             HashMap_AddValue(newClient);
                             HashMap_Show();
@@ -238,7 +239,7 @@ int main(void)
                             HashMap_ShowP();
 
                             //--------------------------------SLANJE PORUKE OSTATKU GRUPE---------------------------------
-                            unsigned int key = GenerateHashValue(porukaOdKlijenta->grupa); //grupa za slanje
+                            unsigned int key = GenerateHashValue(porukaOdKlijenta->grupa) % MAX_GROUPS; //grupa za slanje
                             Element* tempClient = HashMap[key];
 
                             while (tempClient)                                    //klijenti u grupi
@@ -248,8 +249,12 @@ int main(void)
                                     //send the fucking msg
                                     char* tekst = (char*)malloc(100 * sizeof(char));
                                     strcpy(tekst, (char*)porukaOdKlijenta->tekst);
+                                    unsigned int clientSocket = tempClient->client->socket;
 
-                                    iResult = send(acceptedSocket[i], tekst, sizeof(tekst), 0);
+                                    iResult = send((SOCKET)clientSocket, tekst, sizeof(tekst), 0);
+                                    //iResult = send(acceptedSocket[i], tekst, sizeof(tekst), 0);
+
+                                    tempClient = tempClient->nextElement;
                                 }
                                 else
                                     tempClient = tempClient->nextElement;

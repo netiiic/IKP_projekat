@@ -12,6 +12,7 @@ typedef struct ClientData
 	unsigned int port;
 	unsigned char listen_address[MAX_ADDRESS];
 	unsigned int listen_port;
+	unsigned int socket;
 } ClientData;
 
 struct Element

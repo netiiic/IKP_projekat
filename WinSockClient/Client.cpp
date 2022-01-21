@@ -116,7 +116,7 @@ int __cdecl main(int argc, char **argv)
     // Send an prepared message with null terminator included
     //iResult = send( connectSocket, messageToSend, (int)strlen(messageToSend) + 1, 0 );
    // iResult = send(connectSocket, message, (int)strlen(message) + 1, 0);
-
+    
     printf("Hello, what group would you like to connect to? \n");
     unsigned char group[MAX_GROUP_LEN];
     scanf("%s", &group);
@@ -137,65 +137,67 @@ int __cdecl main(int argc, char **argv)
 
     printf("%d\n\n", (int)ntohs(socketAddress.sin_port));
 
-    //primanje poruke
-    char recvbuf[DEFAULT_BUFLEN];
-    // Receive data until the client shuts down the connection
-    iResult = recv(connectSocket, recvbuf, DEFAULT_BUFLEN, 0);
-    if (iResult > 0)
+    while (true)
     {
-        //char* poruka = (char*)recvbuf;
-        printf("%s", recvbuf);
-        
-        char yn[4];
-        scanf("%s", yn);
-        //printf("%s", yn);
-        char* yes = "yes";
-        char* no = "no";
-
-        if (strcmp(yn, yes) == 0)
+        //primanje poruke
+        char recvbuf[DEFAULT_BUFLEN];
+        // Receive data until the client shuts down the connection
+        iResult = recv(connectSocket, recvbuf, DEFAULT_BUFLEN, 0);
+        if (iResult > 0)
         {
-            printf("What would you like to send?");
-            char* message = (char*)malloc(100*sizeof(char));
-            scanf("%s", message);
-            int len = strlen(message);
-            
-            
-            strncpy((char*)packet.message, message, len);
-            packet.message[len] = '\0';
-            free(message);
-            //printf("%s", toSend->poruka);
+            //char* poruka = (char*)recvbuf;
+            printf("%s", recvbuf);
 
-            //strcpy((char*)toSend->grupa, (char*)packet.group);
-            //toSend->listen_port = (int)ntohs(socketAddress.sin_port);
-            packet.flag = 0;
-            iResult = send(connectSocket, (char*)&packet, sizeof(packet), 0);
-            //printf("yes");
+            char yn[4];
+            scanf("%s", yn);
+            //printf("%s", yn);
+            char* yes = "yes";
+            char* no = "no";
+
+            if (strcmp(yn, yes) == 0)
+            {
+                printf("What would you like to send?");
+                char* message = (char*)malloc(100 * sizeof(char));
+                scanf("%s", message);
+                int len = strlen(message);
+
+
+                strncpy((char*)packet.message, message, len);
+                packet.message[len] = '\0';
+                free(message);
+                //printf("%s", toSend->poruka);
+
+                //strcpy((char*)toSend->grupa, (char*)packet.group);
+                //toSend->listen_port = (int)ntohs(socketAddress.sin_port);
+                packet.flag = 0;
+                iResult = send(connectSocket, (char*)&packet, sizeof(packet), 0);
+                //printf("yes");
+            }
+            else if (strcmp(yn, no) == 0)
+            {
+                //printf("no");
+            }
+            else
+            {
+                printf("bullshit");
+            }
+
         }
-        else if (strcmp(yn, no) == 0)
+        else if (iResult == 0)  //connection was closed gracefully
         {
-            printf("no");
+            //printf("Connection with server closed.\n");
+            printf("Server vise nije dostupan!\n");
+            return 0;
+
         }
-        else
+        else  // there was an error during recv
         {
-            printf("bullshit");
+            //printf("recv failed with error: %d\n", WSAGetLastError());
+            printf("Server vise nije dostupan!\n");
+            return 0;
+
         }
-
     }
-    else if (iResult == 0)  //connection was closed gracefully
-    {
-        //printf("Connection with server closed.\n");
-        printf("Server vise nije dostupan!\n");        
-        return 0;
-
-    }
-    else  // there was an error during recv
-    {
-        //printf("recv failed with error: %d\n", WSAGetLastError());
-        printf("Server vise nije dostupan!\n");        
-        return 0;
-
-    }
-
     
     //printf("Bytes Sent: %ld\n", iResult);
     _getch();
