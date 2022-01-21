@@ -208,8 +208,8 @@ int main(void)
 
                             //printf("Message received from client: %s.\n", recvbuf);
 
-                            char* poruka = "Successfully connected!\n";
-                            iResult = send(acceptedSocket[i], poruka, (int)strlen(poruka) + 1, 0);
+                            char returnValue = '1';
+                            iResult = send(acceptedSocket[i], (char*)&returnValue, sizeof(returnValue), 0);
                             if (iResult == SOCKET_ERROR)
                             {
                                 printf("send failed with error: %d\n", WSAGetLastError());
