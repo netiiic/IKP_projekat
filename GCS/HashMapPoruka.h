@@ -22,6 +22,7 @@ struct ElementP
 
 static ElementP* HashMapP[MAX_GROUPS];
 
+void HashMap_ShowP();
 unsigned long GenerateHashValueP(unsigned char* str);
 void HashMap_InitializeP();
 bool HashMap_AddMSG(Poruka* poruka);

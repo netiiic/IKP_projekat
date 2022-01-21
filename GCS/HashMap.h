@@ -22,6 +22,7 @@ struct Element
 
 static Element* HashMap[MAX_GROUPS];
 
+void HashMap_Show();
 unsigned long GenerateHashValue(unsigned char* str);
 void HashMap_Initialize();
 bool HashMap_AddValue(ClientData* client);

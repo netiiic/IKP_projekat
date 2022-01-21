@@ -4,6 +4,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+void HashMap_ShowP()
+{
+	printf("\n---- START ----\n");
+	for (int i = 0; i < MAX_GROUPS; i++)
+	{
+		struct ElementP* tempElement = HashMapP[i];
+		printf("[%d] --->", i);
+		while (tempElement)
+		{
+			printf(" %s, %d, %s |", tempElement->poruka->grupa, tempElement->poruka->listen_port,
+				tempElement->poruka->tekst);
+			tempElement = tempElement->nextElement;
+		}
+		printf(" NULL\n");
+	}
+	printf("---- END ----\n");
+}
+
 unsigned long GenerateHashValueP(unsigned char* str)
 {
 	unsigned long hash = 5381;
