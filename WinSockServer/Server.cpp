@@ -122,6 +122,7 @@ int main(void)
     timeval timeVal;
     timeVal.tv_sec = 1;
     timeVal.tv_usec = 0;
+    HashMap_Initialize();
 
     while (true)
     {
@@ -173,13 +174,13 @@ int main(void)
             {
                 if (FD_ISSET(acceptedSocket[i], &readfds))
                 {
+                    
                     // Receive data until the client shuts down the connection
                     iResult = recv(acceptedSocket[i], recvbuf, DEFAULT_BUFLEN, 0);
                     if (iResult > 0)
-                    {
-                        HashMap_Initialize();
+                    {                        
                         FromClient* fromClient = (FromClient*)recvbuf;
-
+                        
                         if (fromClient->flag)
                         {
                             ClientData* newClient = (ClientData*)malloc(sizeof(ClientData));
@@ -237,7 +238,7 @@ int main(void)
                             HashMap_ShowP();
 
                             //--------------------------------SLANJE PORUKE OSTATKU GRUPE---------------------------------
-                            unsigned long key = GenerateHashValue(porukaOdKlijenta->grupa); //grupa za slanje
+                            unsigned int key = GenerateHashValue(porukaOdKlijenta->grupa); //grupa za slanje
                             Element* tempClient = HashMap[key];
 
                             while (tempClient)                                    //klijenti u grupi
@@ -245,6 +246,10 @@ int main(void)
                                 if (tempClient->client->listen_port != fromClient->listen_port)
                                 {
                                     //send the fucking msg
+                                    char* tekst = (char*)malloc(100 * sizeof(char));
+                                    strcpy(tekst, (char*)porukaOdKlijenta->tekst);
+
+                                    iResult = send(acceptedSocket[i], tekst, sizeof(tekst), 0);
                                 }
                                 else
                                     tempClient = tempClient->nextElement;
