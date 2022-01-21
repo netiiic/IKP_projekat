@@ -236,6 +236,21 @@ int main(void)
                             HashMap_AddMSG(porukaOdKlijenta);
                             HashMap_ShowP();
 
+                            //--------------------------------SLANJE PORUKE OSTATKU GRUPE---------------------------------
+                            unsigned long key = GenerateHashValue(porukaOdKlijenta->grupa); //grupa za slanje
+                            Element* tempClient = HashMap[key];
+
+                            while (tempClient)                                    //klijenti u grupi
+                            {
+                                if (tempClient->client->listen_port != fromClient->listen_port)
+                                {
+                                    //send the fucking msg
+                                }
+                                else
+                                    tempClient = tempClient->nextElement;
+                            }
+                            printf("MESSAGE RELAYED TO GROUP.\n");          //check
+                            
                         }
 
                         
