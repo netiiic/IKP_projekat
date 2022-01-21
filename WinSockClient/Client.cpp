@@ -113,9 +113,7 @@ int __cdecl main(int argc, char **argv)
     
     ToSendInfo packet;
 
-    // Send an prepared message with null terminator included
-    //iResult = send( connectSocket, messageToSend, (int)strlen(messageToSend) + 1, 0 );
-   // iResult = send(connectSocket, message, (int)strlen(message) + 1, 0);
+    //-------------------KLIJENT BIRA GRUPU ZA KONEKCIJU----------------------------
     
     printf("Hello, what group would you like to connect to? \n");
     unsigned char group[MAX_GROUP_LEN];
@@ -135,7 +133,7 @@ int __cdecl main(int argc, char **argv)
         return 1;
     }
 
-    printf("%d\n\n", (int)ntohs(socketAddress.sin_port));
+    printf("My port: %d\n\n", (int)ntohs(socketAddress.sin_port));
 
     while (true)
     {
@@ -145,42 +143,39 @@ int __cdecl main(int argc, char **argv)
         iResult = recv(connectSocket, recvbuf, DEFAULT_BUFLEN, 0);
         if (iResult > 0)
         {
-            //char* poruka = (char*)recvbuf;
+            
             printf("%s", recvbuf);
-
+            printf("Would you like to send a message ? (yes / no)");
             char yn[4];
             scanf("%s", yn);
-            //printf("%s", yn);
             char* yes = "yes";
             char* no = "no";
-
-            if (strcmp(yn, yes) == 0)
-            {
+            
+           if (strcmp(yn, yes) == 0)
+           {
                 printf("What would you like to send?");
                 char* message = (char*)malloc(100 * sizeof(char));
                 scanf("%s", message);
                 int len = strlen(message);
-
-
+                
+                
                 strncpy((char*)packet.message, message, len);
                 packet.message[len] = '\0';
                 free(message);
-                //printf("%s", toSend->poruka);
-
-                //strcpy((char*)toSend->grupa, (char*)packet.group);
-                //toSend->listen_port = (int)ntohs(socketAddress.sin_port);
                 packet.flag = 0;
                 iResult = send(connectSocket, (char*)&packet, sizeof(packet), 0);
-                //printf("yes");
-            }
-            else if (strcmp(yn, no) == 0)
-            {
-                //printf("no");
-            }
-            else
-            {
+
+           }
+           else if (strcmp(yn, no) == 0)
+           {
+               printf("Wainting for message.");
+           }
+           else
+           {
                 printf("bullshit");
-            }
+           }
+            
+            
 
         }
         else if (iResult == 0)  //connection was closed gracefully

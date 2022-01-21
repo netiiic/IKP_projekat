@@ -208,7 +208,7 @@ int main(void)
 
                             //printf("Message received from client: %s.\n", recvbuf);
 
-                            char* poruka = "Successfully connected! Would you like to send a message?(yes/no)\n";
+                            char* poruka = "Successfully connected!\n";
                             iResult = send(acceptedSocket[i], poruka, (int)strlen(poruka) + 1, 0);
                             if (iResult == SOCKET_ERROR)
                             {
@@ -260,6 +260,8 @@ int main(void)
                                     tempClient = tempClient->nextElement;
                             }
                             printf("MESSAGE RELAYED TO GROUP.\n");          //check
+                            HashMap_DeleteMSG(porukaOdKlijenta->grupa);
+                            HashMap_ShowP();
                             
                         }
 
@@ -310,7 +312,7 @@ int main(void)
                             }
                             // there was an error during recv
                             printf("recv failed with error: %d\n", WSAGetLastError());
-                            //HashMap_Show();
+                            HashMap_Show();
                             closesocket(acceptedSocket[i]);
                         }
 
@@ -320,32 +322,6 @@ int main(void)
             }
         }
     }
-
-        /*do
-        {
-            // Wait for clients and accept client connections.
-            // Returning value is acceptedSocket used for further
-            // Client<->Server communication. This version of
-            // server will handle only one client.
-            acceptedSocket = accept(listenSocket, NULL, NULL);
-
-            if (acceptedSocket == INVALID_SOCKET)
-            {
-                printf("accept failed with error: %d\n", WSAGetLastError());
-                closesocket(listenSocket);
-                WSACleanup();
-                return 1;
-            }
-
-            do
-            {
-
-            } while (iResult > 0);
-
-            // here is where server shutdown loguc could be placed
-
-        } while (1);*/
-
 
         for (int i = 0; i < trenutniBrojKonekcija; i++)
         {

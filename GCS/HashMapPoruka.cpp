@@ -74,7 +74,7 @@ bool HashMap_DeleteMSG(unsigned char* group)
 	if (tempElement != NULL)
 	{
 		HashMapP[key] = NULL;
-		printf("Group succesfully deleted.\n");
+		printf("Message succesfully deleted.\n");
 		free(tempElement);
 		return true;
 	}
