@@ -143,8 +143,13 @@ int __cdecl main(int argc, char **argv)
         iResult = recv(connectSocket, recvbuf, DEFAULT_BUFLEN, 0);
         if (iResult > 0)
         {
+            recvbuf[iResult] = '\0';
+            if (strcmp(&recvbuf[0], "1") == 0) {
+                printf("Successfully connected!\n");
+                strcpy(recvbuf, "");
+            }
             
-            printf("%s", recvbuf);
+            printf("\nRecieved message: %s\n", recvbuf);
             printf("Would you like to send a message ? (yes / no)");
             char yn[4];
             scanf("%s", yn);
@@ -153,7 +158,7 @@ int __cdecl main(int argc, char **argv)
             
            if (strcmp(yn, yes) == 0)
            {
-                printf("What would you like to send?");
+                printf("What would you like to send? ");
                 char* message = (char*)malloc(100 * sizeof(char));
                 scanf("%s", message);
                 int len = strlen(message);
@@ -168,7 +173,7 @@ int __cdecl main(int argc, char **argv)
            }
            else if (strcmp(yn, no) == 0)
            {
-               printf("Wainting for message.");
+               printf("Waiting for messages.\n");
            }
            else
            {
