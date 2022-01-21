@@ -14,16 +14,16 @@ typedef struct Poruka
 
 } Poruka;
 
-struct Element
+struct ElementP
 {
 	Poruka* poruka;
-	struct Element* nextElement;
+	struct ElementP* nextElement;
 };
 
-static Element* HashMap[MAX_GROUPS];
+static ElementP* HashMapP[MAX_GROUPS];
 
-unsigned long GenerateHashValue(unsigned char* str);
-void HashMap_Initialize();
+unsigned long GenerateHashValueP(unsigned char* str);
+void HashMap_InitializeP();
 bool HashMap_AddMSG(Poruka* poruka);
 bool HashMap_DeleteMSG(unsigned char* group);
 

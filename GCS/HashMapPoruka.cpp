@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-unsigned long GenerateHashValue(unsigned char* str)
+unsigned long GenerateHashValueP(unsigned char* str)
 {
 	unsigned long hash = 5381;
 	int c;
@@ -14,30 +14,30 @@ unsigned long GenerateHashValue(unsigned char* str)
 	return hash;
 }
 
-void HashMap_Initialize()
+void HashMap_InitializeP()
 {
 	for (int i = 0; i < MAX_GROUPS; i++)
 	{
-		HashMap[i] = NULL;
+		HashMapP[i] = NULL;
 	}
 }
 
 bool HashMap_AddMSG(Poruka* poruka)
 {
-	struct Element* newElement = (struct Element*)malloc(sizeof(struct Element));
+	struct ElementP* newElement = (struct ElementP*)malloc(sizeof(struct ElementP));
 	newElement->poruka = poruka;
 	newElement->nextElement = NULL;
 
-	unsigned int key = GenerateHashValue(poruka->grupa) % MAX_GROUPS;
+	unsigned int key = GenerateHashValueP(poruka->grupa) % MAX_GROUPS;
 
-	if (HashMap[key] == NULL)
+	if (HashMapP[key] == NULL)
 	{
-		HashMap[key] = newElement;
+		HashMapP[key] = newElement;
 		return true;
 	}
 	else
 	{
-		struct Element* tempElement = HashMap[key];
+		struct ElementP* tempElement = HashMapP[key];
 		while (tempElement->nextElement)
 		{
 			tempElement = tempElement->nextElement;
@@ -50,12 +50,12 @@ bool HashMap_AddMSG(Poruka* poruka)
 
 bool HashMap_DeleteMSG(unsigned char* group)
 {
-	unsigned int key = GenerateHashValue(group) % MAX_GROUPS;
-	struct Element* tempElement = HashMap[key];
+	unsigned int key = GenerateHashValueP(group) % MAX_GROUPS;
+	struct ElementP* tempElement = HashMapP[key];
 
 	if (tempElement != NULL)
 	{
-		HashMap[key] = NULL;
+		HashMapP[key] = NULL;
 		printf("Group succesfully deleted.\n");
 		free(tempElement);
 		return true;

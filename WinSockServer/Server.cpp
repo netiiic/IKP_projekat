@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "Functions.h"
 #include "../GCS/HashMap.cpp"
+#include "../GCS/HashMapPoruka.cpp"
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT "27016"
