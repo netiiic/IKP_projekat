@@ -162,13 +162,14 @@ int __cdecl main(int argc, char **argv)
                 printf("What would you like to send? ");
                 char* message = (char*)malloc(100 * sizeof(char));
                 //scanf("%s", message);
-                //scanf("%[^\n]%*c", message);
                 getchar();
+
                 fgets(message, MAX_MSG, stdin);
-                
-                int len = strlen(message);
-                
-                
+
+                int i = 0;
+                for (i = 0; message[i] != '\0'; i++);
+                int len = i;
+
                 strncpy((char*)packet.message, message, len);
                 packet.message[len] = '\0';
                 free(message);

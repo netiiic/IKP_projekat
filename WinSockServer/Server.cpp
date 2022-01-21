@@ -251,7 +251,11 @@ int main(void)
                                     strcpy(tekst, (char*)porukaOdKlijenta->tekst);
                                     unsigned int clientSocket = tempClient->client->socket;
 
-                                    iResult = send((SOCKET)clientSocket, tekst, sizeof(tekst), 0);
+                                    int i = 0;
+                                    for (i = 0; tekst[i] != '\0'; i++);
+                                    tekst[i] = '\0';
+
+                                    iResult = send((SOCKET)clientSocket, tekst, i, 0);
                                     //iResult = send(acceptedSocket[i], tekst, sizeof(tekst), 0);
 
                                     tempClient = tempClient->nextElement;
