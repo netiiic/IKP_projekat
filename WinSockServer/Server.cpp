@@ -19,7 +19,16 @@ int main(void)
         unsigned int port;
         unsigned char listen_address[MAX_ADDRESS];
         unsigned int listen_port;
+        unsigned int flag;
+        unsigned char message[MAX_MSG];
     }FromClient;
+
+    typedef struct MSGFromClient
+    {
+        unsigned char grupa[MAX_GROUP_LEN];
+        unsigned int listen_port;
+        unsigned char tekst[MAX_MSG];
+    }MSGFromClient;
 
     // Socket used for listening for new clients 
     SOCKET listenSocket = INVALID_SOCKET;
@@ -168,48 +177,68 @@ int main(void)
                     iResult = recv(acceptedSocket[i], recvbuf, DEFAULT_BUFLEN, 0);
                     if (iResult > 0)
                     {
+                        HashMap_Initialize();
                         FromClient* fromClient = (FromClient*)recvbuf;
 
-                        ClientData* newClient = (ClientData*)malloc(sizeof(ClientData));
-
-                        sockaddr_in socketAddress;
-                        int socketAddress_len = sizeof(struct sockaddr_in);
-
-                        // Ask getsockname to fill in this socket's local adress
-                        if (getpeername(acceptedSocket[i], (sockaddr*)&socketAddress, &socketAddress_len) == -1)
+                        if (fromClient->flag)
                         {
-                            printf("getsockname() failed.\n"); return -1;
-                        }
+                            ClientData* newClient = (ClientData*)malloc(sizeof(ClientData));
 
-                        char clientAddress[MAX_ADDRESS];
-                        inet_ntop(AF_INET, &socketAddress.sin_addr, clientAddress, INET_ADDRSTRLEN);
+                            sockaddr_in socketAddress;
+                            int socketAddress_len = sizeof(struct sockaddr_in);
 
-                        strcpy((char*)newClient->group, (char*)fromClient->group);
-                        strcpy((char*)newClient->listen_address, (char*)fromClient->listen_address);
-                        newClient->port = (int)ntohs(socketAddress.sin_port);
-                        newClient->listen_port = fromClient->listen_port;
-
-                        HashMap_AddValue(newClient);
-                        HashMap_Show();
-
-                        //printf("Message received from client: %s.\n", recvbuf);
-
-                        char* poruka = "Successfully connected! Would you like to send a message?(yes/no)\n";
-                        iResult = send(acceptedSocket[i], poruka, (int)strlen(poruka) + 1, 0);
-                        if (iResult == SOCKET_ERROR)
-                        {
-                            printf("send failed with error: %d\n", WSAGetLastError());
-                            closesocket(acceptedSocket[i]);
-                            for (int j = i; j < trenutniBrojKonekcija - 1; j++)
+                            // Ask getsockname to fill in this socket's local adress
+                            if (getpeername(acceptedSocket[i], (sockaddr*)&socketAddress, &socketAddress_len) == -1)
                             {
-                                acceptedSocket[j] = acceptedSocket[j + 1];
+                                printf("getsockname() failed.\n"); return -1;
                             }
-                            acceptedSocket[trenutniBrojKonekcija - 1] = INVALID_SOCKET;
-                            trenutniBrojKonekcija--;
-                            i--;
 
+                            char clientAddress[MAX_ADDRESS];
+                            inet_ntop(AF_INET, &socketAddress.sin_addr, clientAddress, INET_ADDRSTRLEN);
+
+                            strcpy((char*)newClient->group, (char*)fromClient->group);
+                            strcpy((char*)newClient->listen_address, (char*)fromClient->listen_address);
+                            newClient->port = (int)ntohs(socketAddress.sin_port);
+                            newClient->listen_port = fromClient->listen_port;
+
+                            HashMap_AddValue(newClient);
+                            HashMap_Show();
+
+                            //printf("Message received from client: %s.\n", recvbuf);
+
+                            char* poruka = "Successfully connected! Would you like to send a message?(yes/no)\n";
+                            iResult = send(acceptedSocket[i], poruka, (int)strlen(poruka) + 1, 0);
+                            if (iResult == SOCKET_ERROR)
+                            {
+                                printf("send failed with error: %d\n", WSAGetLastError());
+                                closesocket(acceptedSocket[i]);
+                                for (int j = i; j < trenutniBrojKonekcija - 1; j++)
+                                {
+                                    acceptedSocket[j] = acceptedSocket[j + 1];
+                                }
+                                acceptedSocket[trenutniBrojKonekcija - 1] = INVALID_SOCKET;
+                                trenutniBrojKonekcija--;
+                                i--;
+
+
+                            }
+                        }
+                        else
+                        {
+                            HashMap_InitializeP();
+                            //MSGFromClient* msgFromClient = (MSGFromClient*)recvbuf;
+                            Poruka* porukaOdKlijenta = (Poruka*)malloc(sizeof(Poruka));
+
+                            strcpy((char*)porukaOdKlijenta->grupa, (char*)fromClient->group);
+                            porukaOdKlijenta->listen_port = fromClient->listen_port;
+                            strcpy((char*)porukaOdKlijenta->tekst, (char*)fromClient->message);
+
+                            HashMap_AddMSG(porukaOdKlijenta);
+                            HashMap_ShowP();
 
                         }
+
+                        
                     }
                     else if (iResult == 0)
                     {

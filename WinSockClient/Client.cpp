@@ -10,6 +10,7 @@
 
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT 27016
+#define MAX_MSG 100
 
 // Initializes WinSock2 library
 // Returns true if succeeded, false otherwise.
@@ -38,10 +39,13 @@ int __cdecl main(int argc, char **argv)
         unsigned int port;
         unsigned char listen_address[MAX_ADDRESS];
         unsigned int listen_port;
+        unsigned int flag = 1;
+        unsigned char message[MAX_MSG];
     }ToSendInfo;
 
     typedef struct Poruka
     {
+        unsigned char grupa[MAX_GROUP_LEN];
         unsigned int listen_port;
         char poruka[];
     }Poruka;
@@ -119,6 +123,7 @@ int __cdecl main(int argc, char **argv)
     strcpy((char*)packet.group, (char*)group);
     strcpy((char*)packet.listen_address, inet_ntoa(socketAddress.sin_addr));
     packet.listen_port = (int)ntohs(socketAddress.sin_port);
+    strcpy((char*)packet.message, "");
     packet.port = 2;
 
     iResult = send(connectSocket, (char*)&packet, sizeof(packet), 0);
@@ -150,19 +155,20 @@ int __cdecl main(int argc, char **argv)
         if (strcmp(yn, yes) == 0)
         {
             printf("What would you like to send?");
-            Poruka *toSend = (Poruka*)malloc(sizeof(Poruka));
             char* message = (char*)malloc(100*sizeof(char));
             scanf("%s", message);
             int len = strlen(message);
             
             
-            strncpy(toSend->poruka, message, len);
-            toSend->poruka[len] = '\0';
+            strncpy((char*)packet.message, message, len);
+            packet.message[len] = '\0';
             free(message);
-            printf("%s", toSend->poruka);
+            //printf("%s", toSend->poruka);
 
-            toSend->listen_port = (int)ntohs(socketAddress.sin_port);
-            iResult = send(connectSocket, (char*)&toSend, sizeof(toSend), 0);
+            //strcpy((char*)toSend->grupa, (char*)packet.group);
+            //toSend->listen_port = (int)ntohs(socketAddress.sin_port);
+            packet.flag = 0;
+            iResult = send(connectSocket, (char*)&packet, sizeof(packet), 0);
             //printf("yes");
         }
         else if (strcmp(yn, no) == 0)
