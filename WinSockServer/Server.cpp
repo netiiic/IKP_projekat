@@ -312,7 +312,7 @@ int main(void)
                             }
                             // there was an error during recv
                             printf("recv failed with error: %d\n", WSAGetLastError());
-                            HashMap_Show();
+                            //HashMap_Show();
                             closesocket(acceptedSocket[i]);
                         }
 

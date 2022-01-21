@@ -8,6 +8,7 @@
 #include <conio.h>
 #include "../GCS/HashMap.cpp"
 
+
 #define DEFAULT_BUFLEN 512
 #define DEFAULT_PORT 27016
 #define MAX_MSG 100
@@ -155,7 +156,11 @@ int __cdecl main(int argc, char **argv)
            {
                 printf("What would you like to send?");
                 char* message = (char*)malloc(100 * sizeof(char));
-                scanf("%s", message);
+                //scanf("%s", message);
+                //scanf("%[^\n]%*c", message);
+                getchar();
+                fgets(message, MAX_MSG, stdin);
+                
                 int len = strlen(message);
                 
                 
