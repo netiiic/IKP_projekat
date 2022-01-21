@@ -118,7 +118,7 @@ bool HashMap_DeleteGroup(unsigned char* group)
 
 void HashMap_Show()
 {
-	printf("\n---- START ----\n");
+	printf("\n---- START_GRUPE ----\n");
 	for (int i = 0; i < MAX_GROUPS; i++)
 	{
 		struct Element* tempElement = HashMap[i];
@@ -131,7 +131,7 @@ void HashMap_Show()
 		}
 		printf(" NULL\n");
 	}
-	printf("---- END ----\n");
+	printf("---- END_GRUPE ----\n");
 }
 
 

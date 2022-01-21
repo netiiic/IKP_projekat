@@ -6,7 +6,7 @@
 
 void HashMap_ShowP()
 {
-	printf("\n---- START ----\n");
+	printf("\n---- START_PORUKE ----\n");
 	for (int i = 0; i < MAX_GROUPS; i++)
 	{
 		struct ElementP* tempElement = HashMapP[i];
@@ -19,7 +19,7 @@ void HashMap_ShowP()
 		}
 		printf(" NULL\n");
 	}
-	printf("---- END ----\n");
+	printf("---- END_PORUKE ----\n");
 }
 
 unsigned long GenerateHashValueP(unsigned char* str)
