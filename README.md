@@ -1,4 +1,18 @@
-# IKP_projekat
+# Description
+
 Group communication service.
 
-Studenti: Aleksa Miskin, Antonina Maričić 
+# Language
+
+C
+
+# Protocol
+ 
+TCP
+
+# Database
+
+HashMap, hashing algorithm: djb2
+
+# Done by
+Aleksa Miskin, Antonina Maričić 
